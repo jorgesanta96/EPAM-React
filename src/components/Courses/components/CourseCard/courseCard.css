@@ -1,0 +1,10 @@
+.courseCard {
+    border: 1px solid green;
+    padding: 10px;
+    margin: 20px;
+}
+
+.courseCard > button {
+    max-width: fit-content;
+    align-self: center;
+}

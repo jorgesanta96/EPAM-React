@@ -1,0 +1,80 @@
+.courses > .createCourse >  .input > label {
+    display: block;
+    padding-bottom: 10px;
+}
+
+.createCourse {
+    display: flex;
+}
+
+.createCourseButton {
+    display: flex;
+    align-self: flex-end;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.createCourseAuthors {
+    border: 1px solid black;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.addAuthorDiv {
+    display: flex;
+    flex-direction: column;
+}
+
+.addAuthorDiv h4 {
+    text-align: center;
+}
+
+.addAuthorDiv label {
+    display: block;
+}
+
+.addAuthorDiv input {
+    margin-bottom: 10px;
+}
+
+.addAuthorDiv .addAuthorButton {
+    align-self: center;
+}
+
+.durationDiv {
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+.durationDiv h4 {
+    text-align: center;
+}
+
+.durationDiv label {
+    display: block;
+}
+
+.durationDiv input {
+    margin-bottom: 10px;
+}
+
+.listAuthorsDiv {
+    display: block;
+}
+
+.listAuthors {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.listAuthors li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}

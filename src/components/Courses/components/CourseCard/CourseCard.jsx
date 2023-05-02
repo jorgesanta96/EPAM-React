@@ -3,6 +3,8 @@ import React from 'react';
 import pipeDuration from '../../../../helpers/pipeDuration';
 import dateGenerator from '../../../../helpers/dateGenerator';
 
+import './courseCard.css';
+
 function CourseCard(props) {
 	const { title, duration, creationDate, description, authorsName } = props;
 	return (

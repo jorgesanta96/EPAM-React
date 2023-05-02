@@ -1,0 +1,10 @@
+.input {
+    display: inline;
+    margin-right: 20px;
+}
+
+.input input {
+    border: 1px solid orange;
+    height: 25px;
+    width: 300px;
+}

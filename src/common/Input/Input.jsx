@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './Input.css';
+
 export default function Input(props) {
 	const { labelText, inputType, placeholderText, minLength, onChange, value } =
 		props;

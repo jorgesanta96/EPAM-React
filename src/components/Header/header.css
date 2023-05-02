@@ -1,0 +1,14 @@
+.header {
+    padding: 10px;
+    border: 1px solid red;
+    display: flex;
+    align-items: center;
+}
+
+.header p {
+    flex: 1;
+    text-align: end;
+    margin-right: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+}

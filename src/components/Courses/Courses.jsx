@@ -9,6 +9,8 @@ import CreateCourse from '../CreateCourse/CreateCourse';
 import { mockedCoursesList, mockedAuthorsList } from '../../constants';
 import getAuthorNames from '../../helpers/getAuthorNames';
 
+import './courses.css';
+
 export default function Courses() {
 	const [courseList, setCourseList] = useState(mockedCoursesList);
 	const [searchInput, setSearchInput] = useState('');
@@ -42,15 +44,19 @@ export default function Courses() {
 
 	return showCourses ? (
 		<div className='courses'>
-			<SearchBar
-				onClick={handleSearch}
-				onChange={handleOnChange}
-				value={searchInput}
-			/>
-			<Button
-				buttonText='Add new course'
-				onClick={() => setShowCourses(false)}
-			/>
+			<div className='searchBar'>
+				<SearchBar
+					onClick={handleSearch}
+					onChange={handleOnChange}
+					value={searchInput}
+				/>
+				<div className='addCourseButton'>
+					<Button
+						buttonText='Add new course'
+						onClick={() => setShowCourses(false)}
+					/>
+				</div>
+			</div>
 			{courseList.map((course) => {
 				return (
 					<CourseCard
