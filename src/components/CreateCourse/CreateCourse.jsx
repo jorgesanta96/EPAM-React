@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
 import Description from './components/Description/Description';
 import AuthorCourseButton from './components/AuthorCourseButton/AuthorCourseButton';
-import Courses from '../Courses/Courses';
 
 import { mockedAuthorsList, mockedCoursesList } from '../../constants';
 import getAuthorNameByID from '../../helpers/getAuthorNameByID';
@@ -30,12 +30,39 @@ const CreateCourse = () => {
 	});
 
 	const [authorsList, setAuthorsList] = useState([...mockedAuthorsList]);
-	const [showCreateCourse, setShowCreateCourse] = useState(true);
+	const [createCourse, setCreateCourse] = useState(false);
+	const navigate = useNavigate();
 
 	// eslint-disable-next-line prettier/prettier
 	const creationDate = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`;
 
-	return showCreateCourse ? (
+	const handleSubmit = () => {
+		if (course.title.length < 1 || course.authors.length < 1) {
+			alert('Please fill all the fields');
+		} else if (course.duration <= 0 || course.duration === '') {
+			alert('Duration should be more than 0 minutes');
+		} else if (course.description.length < 2) {
+			alert('Description length should be at least 2 characters');
+		} else {
+			mockedCoursesList.push(course);
+			setCreateCourse(true);
+		}
+	};
+
+	useEffect(() => {
+		if (createCourse) {
+			navigate('/courses', { state: location.state });
+		}
+	});
+
+	const location = useLocation();
+	let isUserToken = '';
+
+	if (localStorage.getItem('userToken')) {
+		isUserToken = location.state.result;
+	}
+
+	return isUserToken ? (
 		<div className='courses'>
 			<div className='createCourse'>
 				<Input
@@ -52,21 +79,7 @@ const CreateCourse = () => {
 					}
 				/>
 				<div className='createCourseButton'>
-					<Button
-						buttonText='Create course'
-						onClick={() => {
-							if (course.title.length < 1 || course.authors.length < 1) {
-								alert('Please fill all the fields');
-							} else if (course.duration < 0 || course.duration === '') {
-								alert('Duration should be more than 0 minutes');
-							} else if (course.description.length < 2) {
-								alert('Description length should be at least 2 characters');
-							} else {
-								mockedCoursesList.push(course);
-								setShowCreateCourse(false);
-							}
-						}}
-					/>
+					<Button buttonText='Create course' onClick={handleSubmit} />
 				</div>
 			</div>
 			<Description
@@ -105,7 +118,9 @@ const CreateCourse = () => {
 						inputType='number'
 						placeholderText='Enter duration in minutes...'
 						value={course.duration}
-						onChange={(e) => setCourse({ ...course, duration: e.target.value })}
+						onChange={(e) =>
+							setCourse({ ...course, duration: parseInt(e.target.value) })
+						}
 					/>
 					<p>
 						Duration: <b>{pipeDuration(course.duration)}</b> hours
@@ -162,7 +177,7 @@ const CreateCourse = () => {
 			</div>
 		</div>
 	) : (
-		<Courses />
+		<h1>Don't have access to this page</h1>
 	);
 };
 

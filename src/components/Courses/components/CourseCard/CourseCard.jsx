@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import pipeDuration from '../../../../helpers/pipeDuration';
 import dateGenerator from '../../../../helpers/dateGenerator';
@@ -6,7 +7,16 @@ import dateGenerator from '../../../../helpers/dateGenerator';
 import './courseCard.css';
 
 function CourseCard(props) {
-	const { title, duration, creationDate, description, authorsName } = props;
+	const {
+		id,
+		title,
+		duration,
+		creationDate,
+		description,
+		authorsName,
+		stateHeader,
+	} = props;
+
 	return (
 		<div className='courseCard'>
 			<h1>{title}</h1>
@@ -23,7 +33,9 @@ function CourseCard(props) {
 				<strong>Created: </strong>
 				{dateGenerator(creationDate)}
 			</p>
-			<button className='button'>Show course</button>
+			<Link to={`/courses/${id}`} state={stateHeader}>
+				<button className='button'>Show course</button>
+			</Link>
 		</div>
 	);
 }

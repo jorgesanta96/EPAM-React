@@ -1,0 +1,25 @@
+form {
+    text-align: center;
+    border: 2px solid deepskyblue;
+    margin-top: 20px;
+    padding: 50px;
+}
+
+label {
+    display: block;
+    margin: 5px;
+}
+
+.input input {
+    width: 30%;
+    margin: 5px;
+}
+
+button {
+    margin: 5px;
+}
+
+a {
+    color: deepskyblue;
+    text-decoration: none;
+}

@@ -1,0 +1,10 @@
+.courseInfo {
+    border: 2px solid blueviolet;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.courseInfo > button {
+    max-width: fit-content;
+    align-self: center;
+}

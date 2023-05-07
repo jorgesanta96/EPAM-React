@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 import SearchBar from './components/SearchBar/SearchBar';
 import CourseCard from './components/CourseCard/CourseCard';
 import Button from '../../common/Button/Button';
-import CreateCourse from '../CreateCourse/CreateCourse';
 
 import { mockedCoursesList, mockedAuthorsList } from '../../constants';
 import getAuthorNames from '../../helpers/getAuthorNames';
@@ -14,7 +14,6 @@ import './courses.css';
 export default function Courses() {
 	const [courseList, setCourseList] = useState(mockedCoursesList);
 	const [searchInput, setSearchInput] = useState('');
-	const [showCourses, setShowCourses] = useState(true);
 
 	const handleOnChange = (e) => {
 		setSearchInput(e.target.value);
@@ -42,7 +41,14 @@ export default function Courses() {
 		}
 	};
 
-	return showCourses ? (
+	const location = useLocation();
+	let isUserToken = '';
+
+	if (localStorage.getItem('userToken')) {
+		isUserToken = location.state.result;
+	}
+
+	return isUserToken ? (
 		<div className='courses'>
 			<div className='searchBar'>
 				<SearchBar
@@ -51,10 +57,9 @@ export default function Courses() {
 					value={searchInput}
 				/>
 				<div className='addCourseButton'>
-					<Button
-						buttonText='Add new course'
-						onClick={() => setShowCourses(false)}
-					/>
+					<Link to='/courses/add' state={location.state}>
+						<Button buttonText='Add new course' />
+					</Link>
 				</div>
 			</div>
 			{courseList.map((course) => {
@@ -62,12 +67,13 @@ export default function Courses() {
 					<CourseCard
 						key={course.id}
 						authorsName={getAuthorNames(course.authors, mockedAuthorsList)}
+						stateHeader={location.state}
 						{...course}
 					/>
 				);
 			})}
 		</div>
 	) : (
-		<CreateCourse />
+		<h1>Don't have access to this page</h1>
 	);
 }

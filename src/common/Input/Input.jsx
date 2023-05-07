@@ -1,5 +1,7 @@
 import React from 'react';
 
+import capitalizeFirstLetter from '../../helpers/capitalizeFirstLetter.js';
+
 import './Input.css';
 
 export default function Input(props) {
@@ -8,7 +10,7 @@ export default function Input(props) {
 
 	return (
 		<div className='input'>
-			<label htmlFor={labelText}>{labelText}</label>
+			<label htmlFor={labelText}>{capitalizeFirstLetter(labelText)}</label>
 			<input
 				type={inputType || 'text'}
 				name={labelText}
