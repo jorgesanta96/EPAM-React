@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 import pipeDuration from '../../helpers/pipeDuration';
 import dateGenerator from '../../helpers/dateGenerator';
 import getAuthorNames from '../../helpers/getAuthorNames';
 
-import { mockedCoursesList, mockedAuthorsList } from '../../constants';
+import { useSelector } from 'react-redux';
+import {
+	selectCourses,
+	selectAuthors,
+	selectUser,
+} from '../../store/selectors';
 
 import './courseInfo.css';
 
@@ -20,31 +25,34 @@ export default function CourseInfo() {
 	});
 	const { courseId } = useParams();
 
+	const courses = useSelector(selectCourses);
+	const authors = useSelector(selectAuthors);
+	const user = useSelector(selectUser);
+
 	useEffect(() => {
-		const newCourse = mockedCoursesList.find((course) => {
+		const newCourse = courses.find((course) => {
 			return course.id === courseId;
 		});
 
 		setCourse(newCourse);
-	}, [courseId]);
+	}, [courseId, courses]);
 
-	const location = useLocation();
 	let isUserToken = '';
 
-	if (localStorage.getItem('userToken')) {
-		isUserToken = location.state.result;
+	if (user.isAuth) {
+		isUserToken = user.token;
 	}
 
 	return isUserToken ? (
 		<div className='courseInfo'>
-			<Link to={'/courses'} state={location.state}>
+			<Link to={'/courses'}>
 				<button className='button'>Back to courses</button>
 			</Link>
 			<h1>{course.title}</h1>
 			<p>{course.description}</p>
 			<p>
 				<strong>Authors: </strong>
-				{getAuthorNames(course.authors, mockedAuthorsList).join(', ')}
+				{getAuthorNames(course.authors, authors).join(', ')}
 			</p>
 			<p>
 				<strong>Duration: </strong>

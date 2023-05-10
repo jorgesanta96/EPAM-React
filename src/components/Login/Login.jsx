@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import store from '../../store';
+import { userLoggedin } from '../../store/user/actionCreators';
+import { getAuthors, getCourses } from '../../store/services';
+import { coursesGotten } from '../../store/courses/actionCreators';
+import { authorsGotten } from '../../store/authors/actionCreators';
+
 import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
 
@@ -32,7 +38,7 @@ export default function Login() {
 
 		if (result.successful) {
 			// console.log(response);
-			console.log(result);
+			// console.log(result);
 			return result;
 		} else {
 			console.log(result.result);
@@ -51,10 +57,20 @@ export default function Login() {
 		if (isLoggedinUser) {
 			loginUser(user).then((data) => {
 				localStorage.setItem('userToken', data.result);
-				navigate('/courses', { state: data });
+				store.dispatch(userLoggedin(data.user.name, data.user.email));
+				navigate('/courses');
 			});
 		}
 	});
+
+	useEffect(() => {
+		getCourses().then((courses) => {
+			store.dispatch(coursesGotten(courses));
+		});
+		getAuthors().then((authors) => {
+			store.dispatch(authorsGotten(authors));
+		});
+	}, []);
 
 	return (
 		<form className='form' onSubmit={handleSubmit}>

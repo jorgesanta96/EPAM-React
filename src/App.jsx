@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
 	BrowserRouter as Router,
 	Route,
@@ -14,12 +14,6 @@ import Registration from './components/Registration/Registration';
 import CourseInfo from './components/CourseInfo/CourseInfo';
 
 function App() {
-	const [userToken, setUserToken] = useState();
-
-	useEffect(() => {
-		setUserToken(localStorage.getItem('userToken'));
-	}, [userToken]);
-
 	return (
 		<Router>
 			<Header />

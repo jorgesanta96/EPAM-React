@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import Input from '../../common/Input/Input';
@@ -7,10 +7,16 @@ import Button from '../../common/Button/Button';
 import Description from './components/Description/Description';
 import AuthorCourseButton from './components/AuthorCourseButton/AuthorCourseButton';
 
-import { mockedAuthorsList, mockedCoursesList } from '../../constants';
 import getAuthorNameByID from '../../helpers/getAuthorNameByID';
 import deleteAuthorFromList from '../../helpers/deleteAuthorFromList';
 import pipeDuration from '../../helpers/pipeDuration';
+
+import store from '../../store';
+import { courseCreated } from '../../store/courses/actionCreators';
+import { saveNewAuthor } from '../../store/authors/actionCreators';
+
+import { useSelector } from 'react-redux';
+import { selectAuthors, selectUser } from '../../store/selectors';
 
 import './createCourse.css';
 
@@ -29,7 +35,10 @@ const CreateCourse = () => {
 		name: '',
 	});
 
-	const [authorsList, setAuthorsList] = useState([...mockedAuthorsList]);
+	const authors = useSelector(selectAuthors);
+	const user = useSelector(selectUser);
+
+	const [authorsList, setAuthorsList] = useState(authors);
 	const [createCourse, setCreateCourse] = useState(false);
 	const navigate = useNavigate();
 
@@ -44,22 +53,31 @@ const CreateCourse = () => {
 		} else if (course.description.length < 2) {
 			alert('Description length should be at least 2 characters');
 		} else {
-			mockedCoursesList.push(course);
+			// mockedCoursesList.push(course);
+			store.dispatch(
+				courseCreated(
+					course.id,
+					course.title,
+					course.description,
+					course.creationDate,
+					course.duration,
+					course.authors
+				)
+			);
 			setCreateCourse(true);
 		}
 	};
 
 	useEffect(() => {
 		if (createCourse) {
-			navigate('/courses', { state: location.state });
+			navigate('/courses');
 		}
 	});
 
-	const location = useLocation();
 	let isUserToken = '';
 
-	if (localStorage.getItem('userToken')) {
-		isUserToken = location.state.result;
+	if (user.isAuth) {
+		isUserToken = user.token;
 	}
 
 	return isUserToken ? (
@@ -103,7 +121,8 @@ const CreateCourse = () => {
 							onClick={() => {
 								if (author.name.length >= 2) {
 									setAuthorsList([...authorsList, author]);
-									mockedAuthorsList.push(author);
+									// mockedAuthorsList.push(author);
+									store.dispatch(saveNewAuthor(author.id, author.name));
 								} else {
 									alert('Author name length should be at least 2 characters');
 								}
@@ -153,7 +172,7 @@ const CreateCourse = () => {
 					<h4>Course authors</h4>
 					<ul className='listAuthors'>
 						{course.authors.map((authorID) => {
-							const authorName = getAuthorNameByID(authorID, mockedAuthorsList);
+							const authorName = getAuthorNameByID(authorID, authors);
 							return (
 								<AuthorCourseButton
 									key={authorID}

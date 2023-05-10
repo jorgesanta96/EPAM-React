@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+import store from '../../store';
+import { userLoggedout } from '../../store/user/actionCreators';
+import { selectUser } from '../../store/selectors';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Logo from './components/Logo/Logo';
 import Button from '../../common/Button/Button';
@@ -7,21 +12,21 @@ import Button from '../../common/Button/Button';
 import './header.css';
 
 function Header() {
-	const [nameUser, setNameUser] = useState('');
+	const user = useSelector(selectUser);
+	const dispatch = useDispatch();
 
-	const location = useLocation();
 	let isUserToken = '';
+	let nameUser = '';
 
-	useEffect(() => {
-		if (localStorage.getItem('userToken')) {
-			const { state } = location;
-			setNameUser(state.user.name);
-		}
-	}, [location]);
-
-	if (localStorage.getItem('userToken')) {
-		isUserToken = location.state.result;
+	if (user.isAuth) {
+		nameUser = user.name;
+		isUserToken = user.token;
 	}
+
+	// To see the store state, everytime it changes.
+	// store.subscribe(() => {
+	// 	console.log('Store changed', store.getState());
+	// });
 
 	return isUserToken ? (
 		<div className='header'>
@@ -32,6 +37,7 @@ function Header() {
 					buttonText='Logout'
 					onClick={() => {
 						localStorage.removeItem('userToken');
+						dispatch(userLoggedout());
 					}}
 				/>
 			</Link>

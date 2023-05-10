@@ -1,51 +1,52 @@
-import React from 'react';
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import SearchBar from './components/SearchBar/SearchBar';
 import CourseCard from './components/CourseCard/CourseCard';
 import Button from '../../common/Button/Button';
 
-import { mockedCoursesList, mockedAuthorsList } from '../../constants';
 import getAuthorNames from '../../helpers/getAuthorNames';
 
 import './courses.css';
 
+import { useSelector } from 'react-redux';
+import {
+	selectCourses,
+	selectAuthors,
+	selectUser,
+} from '../../store/selectors';
+
+import store from '../../store';
+import {
+	coursesGotten,
+	coursesFound,
+} from '../../store/courses/actionCreators';
+
 export default function Courses() {
-	const [courseList, setCourseList] = useState(mockedCoursesList);
+	const courses = useSelector(selectCourses);
+	const authors = useSelector(selectAuthors);
+	const user = useSelector(selectUser);
+
+	const [courseList, setCourseList] = useState(courses);
 	const [searchInput, setSearchInput] = useState('');
 
 	const handleOnChange = (e) => {
 		setSearchInput(e.target.value);
 
 		if (e.target.value === '') {
-			setCourseList(mockedCoursesList);
+			// setCourseList(courses);
+			store.dispatch(coursesGotten(courseList));
 		}
 	};
 
 	const handleSearch = () => {
-		const newCourseListByTitle = courseList.filter((course) => {
-			return course.title.toLowerCase().includes(searchInput.toLowerCase());
-		});
-		const newCourseListByID = courseList.filter((course) => {
-			return course.id.toLowerCase().includes(searchInput.toLowerCase());
-		});
-
-		if (newCourseListByTitle.length === 0 && newCourseListByID.length === 0) {
-			setCourseList([]);
-		}
-		if (newCourseListByTitle.length > newCourseListByID.length) {
-			setCourseList(newCourseListByTitle);
-		} else {
-			setCourseList(newCourseListByID);
-		}
+		store.dispatch(coursesFound(searchInput));
 	};
 
-	const location = useLocation();
 	let isUserToken = '';
 
-	if (localStorage.getItem('userToken')) {
-		isUserToken = location.state.result;
+	if (user.isAuth) {
+		isUserToken = user.token;
 	}
 
 	return isUserToken ? (
@@ -57,17 +58,16 @@ export default function Courses() {
 					value={searchInput}
 				/>
 				<div className='addCourseButton'>
-					<Link to='/courses/add' state={location.state}>
+					<Link to='/courses/add'>
 						<Button buttonText='Add new course' />
 					</Link>
 				</div>
 			</div>
-			{courseList.map((course) => {
+			{courses.map((course) => {
 				return (
 					<CourseCard
 						key={course.id}
-						authorsName={getAuthorNames(course.authors, mockedAuthorsList)}
-						stateHeader={location.state}
+						authorsName={getAuthorNames(course.authors, authors)}
 						{...course}
 					/>
 				);
