@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import store from '../../store';
-import { userLoggedout } from '../../store/user/actionCreators';
+// import store from '../../store';
 import { selectUser } from '../../store/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -10,6 +9,8 @@ import Logo from './components/Logo/Logo';
 import Button from '../../common/Button/Button';
 
 import './header.css';
+
+import { userLoggedoutThunk } from '../../store/user/thunk';
 
 function Header() {
 	const user = useSelector(selectUser);
@@ -37,7 +38,7 @@ function Header() {
 					buttonText='Logout'
 					onClick={() => {
 						localStorage.removeItem('userToken');
-						dispatch(userLoggedout());
+						dispatch(userLoggedoutThunk);
 					}}
 				/>
 			</Link>

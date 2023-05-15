@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
@@ -12,15 +11,25 @@ import deleteAuthorFromList from '../../helpers/deleteAuthorFromList';
 import pipeDuration from '../../helpers/pipeDuration';
 
 import store from '../../store';
-import { courseCreated } from '../../store/courses/actionCreators';
-import { saveNewAuthor } from '../../store/authors/actionCreators';
 
 import { useSelector } from 'react-redux';
-import { selectAuthors, selectUser } from '../../store/selectors';
+import {
+	selectAuthors,
+	selectCourses,
+	selectUser,
+} from '../../store/selectors';
 
-import './createCourse.css';
+import {
+	courseUpdatedThunk,
+	courseCreatedThunk,
+} from '../../store/courses/thunk';
+import { saveNewAuthorThunk } from '../../store/authors/thunk';
 
-const CreateCourse = () => {
+import './courseForm.css';
+
+const CourseForm = (props) => {
+	const typeForm = props.typeForm;
+
 	const [course, setCourse] = useState({
 		id: '',
 		title: '',
@@ -30,20 +39,33 @@ const CreateCourse = () => {
 		authors: [],
 	});
 
+	const { courseId } = useParams();
+	const authors = useSelector(selectAuthors);
+	const user = useSelector(selectUser);
+	const courses = useSelector(selectCourses);
+
 	const [author, setAuthor] = useState({
 		id: '',
 		name: '',
 	});
 
-	const authors = useSelector(selectAuthors);
-	const user = useSelector(selectUser);
-
 	const [authorsList, setAuthorsList] = useState(authors);
 	const [createCourse, setCreateCourse] = useState(false);
 	const navigate = useNavigate();
 
-	// eslint-disable-next-line prettier/prettier
-	const creationDate = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`;
+	useEffect(() => {
+		if (typeForm === 'Update') {
+			const courseToUpdate = courses.filter(
+				(course) => course.id === courseId
+			)[0];
+			const authorsToUpdate = authors.filter(
+				(author) => courseToUpdate.authors.indexOf(author.id) === -1
+			);
+
+			setCourse(courseToUpdate);
+			setAuthorsList(authorsToUpdate);
+		}
+	}, []);
 
 	const handleSubmit = () => {
 		if (course.title.length < 1 || course.authors.length < 1) {
@@ -53,17 +75,11 @@ const CreateCourse = () => {
 		} else if (course.description.length < 2) {
 			alert('Description length should be at least 2 characters');
 		} else {
-			// mockedCoursesList.push(course);
-			store.dispatch(
-				courseCreated(
-					course.id,
-					course.title,
-					course.description,
-					course.creationDate,
-					course.duration,
-					course.authors
-				)
-			);
+			if (typeForm === 'Update') {
+				store.dispatch(courseUpdatedThunk(course));
+			} else if (typeForm === 'Create') {
+				store.dispatch(courseCreatedThunk(course));
+			}
 			setCreateCourse(true);
 		}
 	};
@@ -80,6 +96,24 @@ const CreateCourse = () => {
 		isUserToken = user.token;
 	}
 
+	const [changeAuthorsList, setChangeAuthorsList] = useState(false);
+
+	useEffect(() => {
+		if (author.name !== '') {
+			setAuthor({
+				...author,
+				id: authors.filter((authorEl) => authorEl.name === author.name)[0].id,
+			});
+			setChangeAuthorsList(true);
+		}
+	}, [authors]);
+
+	useEffect(() => {
+		if (changeAuthorsList) {
+			setAuthorsList([...authorsList, author]);
+		}
+	}, [changeAuthorsList]);
+
 	return isUserToken ? (
 		<div className='courses'>
 			<div className='createCourse'>
@@ -90,14 +124,12 @@ const CreateCourse = () => {
 					onChange={(e) =>
 						setCourse({
 							...course,
-							id: uuidv4(),
 							title: e.target.value,
-							creationDate: creationDate,
 						})
 					}
 				/>
 				<div className='createCourseButton'>
-					<Button buttonText='Create course' onClick={handleSubmit} />
+					<Button buttonText={`${typeForm} course`} onClick={handleSubmit} />
 				</div>
 			</div>
 			<Description
@@ -113,16 +145,14 @@ const CreateCourse = () => {
 						placeholderText='Enter author name...'
 						minLength={2}
 						value={author.name}
-						onChange={(e) => setAuthor({ id: uuidv4(), name: e.target.value })}
+						onChange={(e) => setAuthor({ ...author, name: e.target.value })}
 					/>
 					<div className='addAuthorButton'>
 						<Button
 							buttonText='Create author'
 							onClick={() => {
 								if (author.name.length >= 2) {
-									setAuthorsList([...authorsList, author]);
-									// mockedAuthorsList.push(author);
-									store.dispatch(saveNewAuthor(author.id, author.name));
+									store.dispatch(saveNewAuthorThunk(author.id, author.name));
 								} else {
 									alert('Author name length should be at least 2 characters');
 								}
@@ -200,4 +230,4 @@ const CreateCourse = () => {
 	);
 };
 
-export default CreateCourse;
+export default CourseForm;

@@ -9,9 +9,24 @@ export function coursesGotten(courses) {
 	};
 }
 
-export function courseUpdated() {
+export function courseUpdated({
+	id,
+	title,
+	description,
+	duration,
+	creationDate,
+	authors,
+}) {
 	return {
 		type: actions.UPDATE_COURSE,
+		payload: {
+			id,
+			title,
+			description,
+			duration,
+			creationDate,
+			authors,
+		},
 	};
 }
 
@@ -24,14 +39,14 @@ export function courseDeleted(id) {
 	};
 }
 
-export function courseCreated(
+export function courseCreated({
 	id,
 	title,
 	description,
 	creationDate,
 	duration,
-	authors
-) {
+	authors,
+}) {
 	return {
 		type: actions.SAVE_NEW_COURSE,
 		payload: {

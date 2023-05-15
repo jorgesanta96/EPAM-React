@@ -44,12 +44,14 @@ export default function Courses() {
 	};
 
 	let isUserToken = '';
+	let isUserAdmin = false;
 
 	if (user.isAuth) {
 		isUserToken = user.token;
+		isUserAdmin = user.role === 'admin';
 	}
 
-	return isUserToken ? (
+	return isUserToken && isUserAdmin ? (
 		<div className='courses'>
 			<div className='searchBar'>
 				<SearchBar
@@ -62,6 +64,25 @@ export default function Courses() {
 						<Button buttonText='Add new course' />
 					</Link>
 				</div>
+			</div>
+			{courses.map((course) => {
+				return (
+					<CourseCard
+						key={course.id}
+						authorsName={getAuthorNames(course.authors, authors)}
+						{...course}
+					/>
+				);
+			})}
+		</div>
+	) : isUserToken ? (
+		<div className='courses'>
+			<div className='searchBar'>
+				<SearchBar
+					onClick={handleSearch}
+					onChange={handleOnChange}
+					value={searchInput}
+				/>
 			</div>
 			{courses.map((course) => {
 				return (

@@ -1,7 +1,8 @@
-import { combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
 import reducerUser from './user/reducer';
 import reducerCourses from './courses/reducer';
 import reducerAuthors from './authors/reducer';
+import ReduxThunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
 	user: reducerUser,
@@ -9,6 +10,7 @@ const rootReducer = combineReducers({
 	authors: reducerAuthors,
 });
 
-const store = createStore(rootReducer);
+const middleware = [ReduxThunk];
+const store = createStore(rootReducer, applyMiddleware(...middleware));
 
 export default store;

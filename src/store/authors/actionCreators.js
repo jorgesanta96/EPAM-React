@@ -1,6 +1,6 @@
 import * as actions from './actionTypes';
 
-export function saveNewAuthor(id, name) {
+export function saveNewAuthor({ id, name }) {
 	return {
 		type: actions.SAVE_NEW_AUTHOR,
 		payload: {

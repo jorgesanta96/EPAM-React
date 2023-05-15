@@ -14,6 +14,8 @@ import { urlAPI } from '../../constants';
 
 import './login.css';
 
+import { userLoggedinThunk } from '../../store/user/thunk';
+
 export default function Login() {
 	const [user, setUser] = useState({ email: '', password: '' });
 	const [isLoggedinUser, setIsLoggedinUser] = useState(false);
@@ -37,8 +39,6 @@ export default function Login() {
 		const result = await response.json();
 
 		if (result.successful) {
-			// console.log(response);
-			// console.log(result);
 			return result;
 		} else {
 			console.log(result.result);
@@ -57,7 +57,10 @@ export default function Login() {
 		if (isLoggedinUser) {
 			loginUser(user).then((data) => {
 				localStorage.setItem('userToken', data.result);
-				store.dispatch(userLoggedin(data.user.name, data.user.email));
+				store.dispatch(
+					userLoggedin(data.user.name, data.user.email, data.user.role)
+				);
+				store.dispatch(userLoggedinThunk);
 				navigate('/courses');
 			});
 		}

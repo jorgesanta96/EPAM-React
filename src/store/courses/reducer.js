@@ -19,8 +19,21 @@ export default function reducer(state = coursesInitialState, action) {
 		case actions.DELETE_COURSE:
 			return state.filter((course) => course.id !== action.payload.id);
 		case actions.UPDATE_COURSE:
-			console.log('Update Course functionality havent been implemented');
-			return state;
+			const notUpdatedCourses = state.filter(
+				(course) => course.id !== action.payload.id
+			);
+
+			return [
+				...notUpdatedCourses,
+				{
+					id: action.payload.id,
+					title: action.payload.title,
+					description: action.payload.description,
+					creationDate: action.payload.creationDate,
+					duration: action.payload.duration,
+					authors: action.payload.authors,
+				},
+			];
 		case actions.GET_COURSES:
 			return action.payload.courses;
 		case actions.SEARCH_COURSES:
