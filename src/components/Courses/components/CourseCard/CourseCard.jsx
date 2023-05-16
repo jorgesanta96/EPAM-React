@@ -22,7 +22,7 @@ function CourseCard(props) {
 	const isUserAdmin = user.role === 'admin';
 
 	return isUserAdmin ? (
-		<div className='courseCard'>
+		<div className='courseCard' data-testid='courseCard'>
 			<h1>{title}</h1>
 			<p>{description}</p>
 			<p>
@@ -49,7 +49,7 @@ function CourseCard(props) {
 			/>
 		</div>
 	) : (
-		<div className='courseCard'>
+		<div className='courseCard' data-testid='courseCard'>
 			<h1>{title}</h1>
 			<p>{description}</p>
 			<p>
